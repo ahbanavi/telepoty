@@ -128,7 +128,7 @@ def write_uri():
 
     # write data
     with open("data.json", "w") as outfile:
-        json.dump(data, outfile)
+        json.dump(data, outfile, indent=4)
 
 
 def add_songs_from_uri():
@@ -138,3 +138,10 @@ def add_songs_from_uri():
         uris.append(item["uri"])
 
     add_song_to_playlist(uris)
+
+
+# first writes uri to data.json
+# write_uri()
+
+# then adds songs to playlist
+# add_songs_from_uri()

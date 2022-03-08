@@ -64,7 +64,7 @@ async def main():
 
     if new_songs:
         with open("data.json", "w") as outfile:
-            json.dump(data, outfile)
+            json.dump(data, outfile, indent=4)
             print(f"{new_songs} New songs added to data.json")
     else:
         print("No new songs")
