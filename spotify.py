@@ -1,11 +1,10 @@
 from dotenv import load_dotenv
-import json
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from helpers import read_data, write_data
 
 load_dotenv()
-
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
@@ -118,30 +117,28 @@ def find_song_ids(data):
     return data
 
 
-# load data
-with open("data.json", "r") as json_file:
-    data = json.load(json_file)
-
-
-def write_uri():
+def get_uri(data):
     data["items"] = find_song_ids(data["items"])
 
-    # write data
-    with open("data.json", "w") as outfile:
-        json.dump(data, outfile, indent=4)
+    return data
 
 
-def add_songs_from_uri():
+def add_songs_from_uri(data):
     # add songs to playlist
     uris = []
     for item in data["items"]:
-        uris.append(item["uri"])
+        if item.get("uri", False):
+            uris.append(item["uri"])
 
     add_song_to_playlist(uris)
 
 
-# first writes uri to data.json
-# write_uri()
+if __name__ == "__main__":
+    # first writes uri to data.json
+    data = get_uri(read_data())
 
-# then adds songs to playlist
-# add_songs_from_uri()
+    # then adds songs to playlist
+    add_songs_from_uri(data)
+
+    # finally writes data to data.json
+    write_data(data)

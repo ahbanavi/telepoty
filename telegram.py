@@ -1,6 +1,6 @@
 import asyncio
 from dotenv import load_dotenv
-import json
+from helpers import read_data, write_data
 import os
 from telethon import TelegramClient
 
@@ -12,15 +12,8 @@ HASH_ID = os.getenv("TELEGRAM_HASH_ID")
 
 TARGET_CHAT = os.getenv("TELEGRAM_TARGET_CHAT")
 
-# read data from json
-try:
-    with open("data.json", "r") as json_file:
-        data = json.load(json_file)
-except:
-    data = {"items": [], "min_id": 0}
 
-
-async def main():
+async def main(data):
     # The first parameter is the .session file name (absolute paths allowed)
     client = TelegramClient(".tele", APP_ID, HASH_ID)
     await client.start()
@@ -63,13 +56,14 @@ async def main():
                 print(">>> duplicate: ", new_item)
 
     if new_songs:
-        with open("data.json", "w") as outfile:
-            json.dump(data, outfile, indent=4)
-            print(f"{new_songs} New songs added to data.json")
+        print(f"{new_songs} New songs added to data.json")
     else:
         print("No new songs")
 
     await client.disconnect()
+    return data
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    data = asyncio.run(main(read_data()))
+    write_data(data)
